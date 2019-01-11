@@ -1,27 +1,22 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from typing import List
+from collections import deque
 
 
 players = 430
 last_no = 71588 * 100
 
 points = [0 for _ in range(players)]
-marbles: List[int] = [0]
-i = 1
-current = 0
-while i <= last_no:
-    for player in range(players):
-        if i % 23 == 0:
-            current = (current - 7) % len(marbles)
-            points[player] += i + marbles.pop(current)
-        else:
-            current = (current + 2) % len(marbles)
-            marbles.insert(current, i)
+marbles = deque([0])
 
-        i += 1
-        if i > last_no:
-            break
+for i in range(1, last_no + 1):
+    if i % 23 == 0:
+        marbles.rotate(7)
+        points[i % players] += i + marbles.pop()
+        marbles.rotate(-1)
+    else:
+        marbles.rotate(-1)
+        marbles.append(i)
 
 print(max(points))
